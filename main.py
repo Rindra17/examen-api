@@ -5,6 +5,7 @@ from typing import List
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
 app = FastAPI()
@@ -44,6 +45,15 @@ def add_posts(new_post: List[PostModel]):
 @app.get("/posts")
 def get_posts():
     return JSONResponse( {"posts": serialized_posts()}, status_code=200)
+
+@app.get("/ping/auth")
+def get_ping_auth(request: Request):
+    authentification = request.headers.get("Accept")
+    if authentification is None:
+        return JSONResponse({"message": "n'est pas autorisé"}, status_code=401)
+    if authentification != "123456":
+        return JSONResponse({"message": "vous n'avez pas les permissions nécessaires"}, status_code=403)
+    return JSONResponse({"players": "pong"})
 
 @app.get("/{full_path:path}")
 def unknown(full_path: str):
