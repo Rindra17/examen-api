@@ -19,11 +19,6 @@ def home():
         html_content = file.read()
     return Response(content=html_content, status_code=200, media_type="text/html")
 
-@app.get("/{full_path:path}")
-def unknown(full_path: str):
-    with open("notFound.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return Response(content=html_content, status_code=404, media_type="text/html")
 
 class PostModel(BaseModel):
     author: str
@@ -40,6 +35,16 @@ def serialized_posts():
     return posts_serialized
 
 @app.post("/posts")
-def add_players(new_post: List[PostModel]):
+def add_posts(new_post: List[PostModel]):
     post_list.extend(new_post)
     return JSONResponse( {"posts": serialized_posts()}, status_code=201)
+
+@app.get("/posts")
+def get_posts():
+    return JSONResponse( {"posts": serialized_posts()}, status_code=200)
+
+@app.get("/{full_path:path}")
+def unknown(full_path: str):
+    with open("notFound.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
+    return Response(content=html_content, status_code=404, media_type="text/html")
