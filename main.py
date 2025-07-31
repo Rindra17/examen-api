@@ -1,5 +1,6 @@
 
 import datetime
+from operator import truediv
 from typing import List
 
 from fastapi import FastAPI
@@ -31,7 +32,8 @@ post_list: List[PostModel] = []
 def serialized_posts():
     posts_serialized = []
     for post in post_list:
-        posts_serialized.append(post.model_dump_json())
+        post.creation_datetime = datetime.datetime.__str__(post.creation_datetime)
+        posts_serialized.append(post.model_dump())
     return posts_serialized
 
 @app.post("/posts")
